@@ -1,0 +1,72 @@
+@model List<Wedding>
+
+<div class="text-center">
+    <h1>Welcome to the Wedding Planner</h1>
+    <hr>
+    <table class="table table-dark table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Wedding</th>
+                <th scope="col">Date</th>
+                <th scope="col">Guest</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(Wedding wed in Model)
+            {
+                bool alreadyRsvp = wed.Users.Any(rsvp => rsvp.UserId == Context.Session.GetInt32("UserId") && rsvp.IsRsvp);
+            <tr>
+                <th><a 
+                asp-route-wedId="@wed.WeddingId"
+                asp-action="WeddingPage"
+                asp-controller="Home">@wed.WedderOne & @wed.WedderTwo</a></th>
+                <td>@wed.Date</td>
+                <td>@wed.Users.Where(u => u.IsRsvp == true).ToList().Count</td>
+                @if(Context.Session.GetInt32("UserId") == wed.Creator)
+                {
+                    <td>
+                        <form 
+                            method="POST"
+                            asp-action="DeleteWed"
+                            asp-controller="Home"
+                            asp-route-userId="@Context.Session.GetInt32("UserId")"
+                            asp-route-wedId="@wed.WeddingId">
+                            <button class="btn btn-primary">Delete</button>
+                        </form>
+                    </td>
+                }
+                else if (alreadyRsvp)
+                {
+                    <td>
+                        <form 
+                            method="POST"
+                            asp-action="UnRsvp"
+                            asp-controller="Home"
+                            asp-route-IsRsvp="@false"
+                            asp-route-userId="@Context.Session.GetInt32("UserId")"
+                            asp-route-wedId="@wed.WeddingId">
+                            <button class="btn btn-primary">Un-RSVP</button>
+                        </form>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <form 
+                            method="POST"
+                            asp-action="Rsvp"
+                            asp-controller="Home"
+                            asp-route-userId="@Context.Session.GetInt32("UserId")"
+                            asp-route-IsRsvp="@true"
+                            asp-route-wedId="@wed.WeddingId">
+                            <button class="btn btn-primary">RSVP</button>
+                        </form>
+                    </td>
+                }
+            </tr>
+            }
+        </tbody>
+    </table>
+    <a href="/newwedding" class="btn btn-dark" role="button">New Wedding</a>
+</div>

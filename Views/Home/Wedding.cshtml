@@ -1,0 +1,13 @@
+@model Wedding
+<div class="text-center">
+    <a href="/dashboard" class="btn btn-dark" role="button">Dashboard</a>
+    <h1>@Model.WedderOne and @Model.WedderTwo's Wedding</h1>
+    <h4>@Model.Date</h4>
+    <h4>Guests:</h4>
+    <ul class="list-group list-group-flush">
+        @foreach(Rsvp user in Model.Users)
+        {
+        <li class="list-group-item">@user.User.FirstName @user.User.LastName</li>
+        }
+    </ul>
+</div>
